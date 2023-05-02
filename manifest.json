@@ -1,0 +1,31 @@
+{
+    "version": "2.0",
+    "manifest_version": 3,
+    "name": "Talking ChatGPT",
+    "description": "Convert your speech into text so you can have a real conversation with (a talking) ChatGPT.",
+    "permissions": ["storage"],
+    "background": {
+        "service_worker": "js/service_worker.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://chat.openai.com/*"],
+            "js": ["js/content-script.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["js/chatgpt-stt.js"],
+            "matches": ["*://chat.openai.com/*"]
+        }
+    ],
+    "action": {
+        "default_popup": "popup/popup.html"
+    },
+    "icons": {
+        "16": "images/icon16.png",
+        "32": "images/icon32.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    }
+}

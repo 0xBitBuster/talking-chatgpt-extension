@@ -1,0 +1,145 @@
+/* RESET STYLE DEFAULTS */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.4rem;
+    min-width: 28rem;
+    background-color: #051726;
+    color: #eee;
+    padding: 2rem;
+}
+
+/* COMPONENTS */
+.form-select {
+    border-radius: 0.25rem;
+    outline: none;
+    padding: 0.25rem;
+}
+
+.form-toggler {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 6.2rem;
+    height: 3.2rem;
+    display: inline-block;
+    position: relative;
+    border-radius: 5rem;
+    overflow: hidden;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: #707070;
+    transition: background-color ease 0.3s;
+}
+
+.form-toggler:before {
+    content: "on off";
+    display: block;
+    position: absolute;
+    z-index: 2;
+    width: 2.8rem;
+    height: 2.8rem;
+    background: #fff;
+    left: 0.2rem;
+    top: 0.2rem;
+    border-radius: 50%;
+    font: 1rem/2.8rem Helvetica;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-indent: -2.2rem;
+    word-spacing: 3.7rem;
+    color: #fff;
+    text-shadow: -0.1rem -0.1rem rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    box-shadow: 0 0.1rem 2px rgba(0, 0, 0, 0.2);
+    transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.form-toggler:checked {
+    background-color: #81ffd9;
+}
+
+.form-toggler:checked:before {
+    left: 3.2rem;
+}
+
+.btn-select {
+    cursor: pointer;
+    color: #eee;
+    border: none;
+    padding: 0.75rem 1rem;
+    background: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.btn-select:hover {
+    color: #69ffd2;
+}
+.btn-select.selected {
+    background-color: #00be84;
+}
+.btn-select.selected:hover {
+    color: #eee;
+}
+
+/* UTILITIES */
+.mb-small {
+    margin-bottom: 0.25rem;
+}
+.mb-medium {
+    margin-bottom: 1rem;
+}
+.mb-big {
+    margin-bottom: 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+.gap-small {
+    gap: 1rem;
+}
+.items-center {
+    align-items: center;
+}
+
+.hidden {
+    display: none;
+}
+
+/* HEADER */
+.header {
+    margin-bottom: 2rem;
+}
+.header-slogan {
+    color: #7fffd8;
+}
+
+
+/* TABS */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #00be84;
+}
+
+.tabs button {
+    flex: 1;
+}
+
+.extension-notes {
+    margin-top: 2rem;
+}
+.extension-notes p {
+    color: #888;
+    font-size: 1.2rem;
+}

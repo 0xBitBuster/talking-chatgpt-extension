@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking ChatGPT</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="header">
+        <h2 class="header-slogan">Talking</h2>
+        <h1>ChatGPT</h1>
+    </div>
+    <div class="tabs mb-big" id="tabs-container">
+        <button class="btn-select selected">Speech to Text</button>
+        <button class="btn-select">Text to Speech</button>
+    </div>
+    <div data-id="container-0">
+        <div class="mb-medium">
+            <h3 class="mb-small">Language</h3>
+            <select class="form-select" id="select_stt-language"></select>
+        </div>
+        <div class="flex items-center gap-small">
+            <h3 class="mb-small">Auto Send</h3>
+            <input class="form-toggler" type="checkbox" id="checkbox_stt-autosend" />
+        </div>
+    </div>
+    <div class="hidden" data-id="container-1">
+        <div class="flex items-center gap-small mb-medium">
+            <h3 class="mb-small">Enabled</h3>
+            <input class="form-toggler" type="checkbox" id="checkbox_tts-enabled" />
+        </div>
+        <div class="mb-medium">
+            <h3 class="mb-small">Voice Language</h3>
+            <select class="form-select" id="select_tts-language"></select>
+        </div>
+        <div class="mb-medium">
+            <h3 class="mb-small">Talking speed</h3>
+            <select class="form-select" id="select_tts-voice-speed"></select>
+        </div>
+    </div>
+    <div class="extension-notes">
+        <p>* Text to Speech may sometimes stop due to a chrome bug</p>
+        <p>* Please refresh ChatGPT after any changes</p>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
