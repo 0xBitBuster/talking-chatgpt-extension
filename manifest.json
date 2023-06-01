@@ -1,5 +1,5 @@
 {
-    "version": "2.0",
+    "version": "2.2",
     "manifest_version": 3,
     "name": "Talking ChatGPT",
     "description": "Convert your speech into text so you can have a real conversation with (a talking) ChatGPT.",
