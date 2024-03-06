@@ -28,7 +28,7 @@ let appSettings = {
 
 // ! Has to be anything but button !
 const sttBtnHTML = `
-<a id="chatgpt-stt-btn" class="absolute rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 cursor-pointer" style="bottom: 1rem; right: 3.2rem; padding: 4px 6px">
+<a id="chatgpt-stt-btn" class="absolute rounded-md text-gray-500 hover:bg-gray-700 dark:hover:text-gray-400 dark:hover:bg-gray-900 cursor-pointer top-1/2 -translate-y-1/2" style="right: 3.2rem; padding: 6px 8px">
 <?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12px" height="18px" viewBox="0 0 13 19" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:nonzero;fill:rgb(185,179,170);fill-opacity:1;" d="M 6.5 12.902344 C 8.460938 12.902344 10.042969 11.382812 10.042969 9.5 L 10.042969 3.832031 C 10.042969 1.949219 8.460938 0.433594 6.5 0.433594 C 4.539062 0.433594 2.957031 1.949219 2.957031 3.832031 L 2.957031 9.5 C 2.957031 11.382812 4.539062 12.902344 6.5 12.902344 Z M 12.410156 7.234375 L 11.820312 7.234375 C 11.496094 7.234375 11.234375 7.484375 11.234375 7.800781 L 11.234375 9.5 C 11.234375 12.152344 8.847656 14.277344 6.03125 14.015625 C 3.574219 13.78125 1.765625 11.664062 1.765625 9.296875 L 1.765625 7.800781 C 1.765625 7.484375 1.503906 7.234375 1.179688 7.234375 L 0.589844 7.234375 C 0.265625 7.234375 0 7.484375 0 7.800781 L 0 9.214844 C 0 12.394531 2.355469 15.226562 5.617188 15.664062 L 5.617188 16.867188 L 3.542969 16.867188 C 3.21875 16.867188 2.957031 17.121094 2.957031 17.433594 L 2.957031 18 C 2.957031 18.316406 3.21875 18.566406 3.542969 18.566406 L 9.457031 18.566406 C 9.78125 18.566406 10.042969 18.316406 10.042969 18 L 10.042969 17.433594 C 10.042969 17.121094 9.78125 16.867188 9.457031 16.867188 L 7.382812 16.867188 L 7.382812 15.671875 C 10.550781 15.257812 13 12.648438 13 9.5 L 13 7.800781 C 13 7.484375 12.734375 7.234375 12.410156 7.234375 Z M 12.410156 7.234375 "/></g></svg>
 </a>
 `;
@@ -233,9 +233,8 @@ function awaitTimeout(ms) {
  * Checks if ChatGPT is writing a response
  */
 async function checkIfWritingResponse() {
-    let submitBtnChild = chat_submitBtn?.childNodes[0] || null;
-    let currentlyWritingResponse = submitBtnChild?.nodeName === "DIV";
-    if (!submitBtnChild || !currentlyWritingResponse) return;
+    let writingSubmitBtn = chat_textarea?.parentElement?.querySelector("div")
+    if (!writingSubmitBtn) return;
 
     clearInterval(checkWritingInterval);
 
@@ -247,8 +246,7 @@ async function checkIfWritingResponse() {
     const makeSpeech = async (spokenIndex) => {
         if (currentlySpeaking) return;
 
-        let submitBtnChild = chat_submitBtn?.childNodes[0] || null;
-        let currentlyWritingResponse = submitBtnChild?.nodeName === "DIV";
+        let writingSubmitBtn = chat_textarea?.parentElement?.querySelector("div")
         let allResponseDivs = document.querySelectorAll(CHAT_RESPONSES_SELECTOR);
         let currentResponseDiv = allResponseDivs[allResponseDivs.length - 1];
         if (!currentResponseDiv) {
@@ -258,7 +256,6 @@ async function checkIfWritingResponse() {
 
         let currentResponse = currentResponseDiv.textContent;
         let slicedResponse = currentResponse.slice(spokenIndex);
-
         ssInstance.text = slicedResponse;
 
         currentlySpeaking = true;
@@ -266,7 +263,7 @@ async function checkIfWritingResponse() {
             spokenIndex += slicedResponse.length;
             currentlySpeaking = false;
 
-            if (!currentlyWritingResponse) {
+            if (!writingSubmitBtn) {
                 // If response is finished, make the last speech with the remaining text
                 let allResponseDivs = document.querySelectorAll(CHAT_RESPONSES_SELECTOR);
                 let currentResponseDiv = allResponseDivs[allResponseDivs.length - 1];
@@ -280,7 +277,6 @@ async function checkIfWritingResponse() {
         
                 console.log(slicedResponse)
                 ssInstance.text = slicedResponse;
-        
                 speechUtteranceChunker(ssInstance, { chunkLength: 5000 }, () => {
                     checkWritingInterval = setInterval(checkIfWritingResponse, 1000);
                 });
