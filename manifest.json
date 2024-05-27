@@ -1,5 +1,5 @@
 {
-    "version": "2.3",
+    "version": "2.4",
     "manifest_version": 3,
     "name": "Talking ChatGPT",
     "description": "Convert your speech into text so you can have a real conversation with (a talking) ChatGPT.",
@@ -9,14 +9,14 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://chat.openai.com/*"],
+            "matches": ["*://chatgpt.com/*"],
             "js": ["js/content-script.js"]
         }
     ],
     "web_accessible_resources": [
         {
             "resources": ["js/chatgpt-stt.js"],
-            "matches": ["*://chat.openai.com/*"]
+            "matches": ["*://chatgpt.com/*"]
         }
     ],
     "action": {

@@ -5,7 +5,7 @@ const CHATGPT_APPROX_RESPONSE_TIME_MS = 4000
 
 let chat_textarea = document.querySelector(CHAT_TEXTAREA_SELECTOR) || null;
 let chat_container = chat_textarea?.parentElement;
-let chat_submitBtn = chat_container?.children ? [...chat_container.children].find((el) => el.type === "submit") : null;
+let chat_submitBtn = chat_container?.parentElement?.children ? [...chat_container.parentElement.children].find((el) => el.tagName === "BUTTON") : null;
 let speechRecognition = null;
 let speechRecognizing = false;
 let checkWritingInterval = null;
@@ -109,7 +109,7 @@ function checkIfVisible() {
     if (!document.getElementById("chatgpt-stt-btn")) {
         chat_textarea = document.querySelector(CHAT_TEXTAREA_SELECTOR) || null;
         chat_container = chat_textarea?.parentElement;
-        chat_submitBtn = chat_container?.children ? [...chat_container.children].find((el) => el.type === "submit") : null;
+        chat_submitBtn = chat_container?.parentElement?.children ? [...chat_container.parentElement.children].find((el) => el.type === "submit") : null;
 
         chat_textarea?.style.setProperty("padding-right", "4rem");
         chat_container?.insertAdjacentHTML("beforeend", sttBtnHTML);
