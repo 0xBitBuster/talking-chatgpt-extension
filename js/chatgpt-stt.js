@@ -233,7 +233,7 @@ function awaitTimeout(ms) {
  * Checks if ChatGPT is writing a response
  */
 async function checkIfWritingResponse() {
-    let writingSubmitBtn = chat_textarea?.parentElement?.querySelector("div")
+    let writingSubmitBtn = chat_textarea?.parentElement?.parentElement?.querySelector("div")
     if (!writingSubmitBtn) return;
 
     clearInterval(checkWritingInterval);
@@ -246,7 +246,7 @@ async function checkIfWritingResponse() {
     const makeSpeech = async (spokenIndex) => {
         if (currentlySpeaking) return;
 
-        let writingSubmitBtn = chat_textarea?.parentElement?.querySelector("div")
+        let writingSubmitBtn = chat_textarea?.parentElement?.parentElement?.querySelector("div")
         let allResponseDivs = document.querySelectorAll(CHAT_RESPONSES_SELECTOR);
         let currentResponseDiv = allResponseDivs[allResponseDivs.length - 1];
         if (!currentResponseDiv) {
