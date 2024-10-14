@@ -2,11 +2,6 @@ const defaultSettings = {
     stt: {
         language_code: "en-US",
         auto_send: false,
-    },
-    tts: {
-        enabled: false,
-        language_code: "en-US",
-        speed: 1
     }
 }
 

@@ -1,11 +1,7 @@
 const stt_container = document.getElementById("stt-container")
-const tts_container = document.getElementById("tts-container")
 const all_tab_buttons = document.querySelectorAll("#tabs-container button")
 const select_stt_language = document.getElementById("select_stt-language");
 const checkbox_stt_autosend = document.getElementById("checkbox_stt-autosend")
-const checkbox_tts_enabled = document.getElementById("checkbox_tts-enabled");
-const select_tts_language = document.getElementById("select_tts-language");
-const select_tts_voice_speed = document.getElementById("select_tts-voice-speed");
 
 const languages = [
     ["Afrikaans", "af-ZA"],
@@ -72,22 +68,11 @@ const languages = [
     ["日本語", "ja-JP"],
     ["Lingua latīna", "la"],
 ];
-const voiceSpeeds = [
-    ['Slow', 0.6],
-    ['Normal', 1],
-    ['Fast', 2],
-    ['Really Fast', 4]
-]
 let selectedTabIndex = 0;
 let appSettings = {
     stt: {
         language_code: "en-US",
         auto_send: false,
-    },
-    tts: {
-        enabled: false,
-        language_code: "en-US",
-        speed: 1
     }
 }
 
@@ -110,10 +95,6 @@ async function loadSettings() {
 
     select_stt_language.selectedIndex = languages.findIndex(arr => arr[1] === settings.stt.language_code);
     checkbox_stt_autosend.checked = settings.stt.auto_send
-
-    select_tts_language.selectedIndex = languages.findIndex(arr => arr[1] === settings.tts.language_code)
-    select_tts_voice_speed.selectedIndex = voiceSpeeds.findIndex(arr => arr[1] == settings.tts.speed)
-    checkbox_tts_enabled.checked = settings.tts.enabled
 }
 
 async function changeSettings(newSettings) {
@@ -133,12 +114,6 @@ async function changeSettings(newSettings) {
 /*****************/
 for (let i = 0; i < languages.length; i++) {
     select_stt_language.options[i] = new Option(languages[i][0], i);
-}
-for (let i = 0; i < languages.length; i++) {
-    select_tts_language.options[i] = new Option(languages[i][0], i);
-}
-for (let i = 0; i < voiceSpeeds.length; i++) {
-    select_tts_voice_speed.options[i] = new Option(voiceSpeeds[i][0], i);
 }
 
 loadSettings()
@@ -164,39 +139,6 @@ checkbox_stt_autosend.addEventListener("change", async(e) => {
         stt: {
             ...appSettings.stt,
             auto_send: checkedAutoSend,
-        }
-    })
-});
-
-checkbox_tts_enabled.addEventListener("change", async(e) => {
-    const checkedTtsEnabled = e.currentTarget.checked
-
-    await changeSettings({
-        tts: {
-            ...appSettings.tts,
-            enabled: checkedTtsEnabled,
-        }
-    })
-})
-
-select_tts_language.addEventListener("change", async() => {
-    const selectedVoice = languages[select_tts_language.selectedIndex][1]
-
-    await changeSettings({
-        tts: {
-            ...appSettings.tts,
-            language_code: selectedVoice,
-        }
-    })
-});
-
-select_tts_voice_speed.addEventListener("change", async() => {
-    const selectedVoiceSpeed = voiceSpeeds[select_tts_voice_speed.selectedIndex][1]
-
-    await changeSettings({
-        tts: {
-            ...appSettings.tts,
-            speed: selectedVoiceSpeed,
         }
     })
 });

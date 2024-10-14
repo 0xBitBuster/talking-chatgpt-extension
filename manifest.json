@@ -1,5 +1,5 @@
 {
-    "version": "2.5",
+    "version": "2.6",
     "manifest_version": 3,
     "name": "Talking ChatGPT",
     "description": "Convert your speech into text so you can have a real conversation with (a talking) ChatGPT.",
@@ -15,7 +15,7 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["js/chatgpt-stt.js"],
+            "resources": ["js/chatgpt.js"],
             "matches": ["*://chatgpt.com/*"]
         }
     ],

@@ -1,7 +1,4 @@
 const CHAT_TEXTAREA_SELECTOR = "#prompt-textarea";
-const CHAT_RESPONSES_SELECTOR = ".markdown.prose.w-full.break-words";
-const CHAT_ERROR_RESPONSES_SELECTOR = ".text-gray-600.rounded-md.border-red-500";
-const CHATGPT_APPROX_RESPONSE_TIME_MS = 4000
 
 let chat_textarea = document.querySelector(CHAT_TEXTAREA_SELECTOR) || null;
 let chat_container = chat_textarea?.parentElement;
@@ -11,20 +8,15 @@ let speechRecognizing = false;
 let checkWritingInterval = null;
 let ssInstance = null; // ! Keep global instance to not get garbage collected !
 let browserSupports = {
-    speechToText: true,
-    textToSpeech: true,
+    speechToText: true
 };
 let appSettings = {
     stt: {
         language_code: "en-US",
         auto_send: false,
-    },
-    tts: {
-        enabled: false,
-        language_code: "en-US",
-        speed: 1,
-    },
+    }
 };
+
 
 // ! Has to be anything but button !
 const sttBtnHTML = `
@@ -63,16 +55,14 @@ function toggleSTT() {
     };
 
     speechRecognition.onend = () => {
-        chat_textarea.value = final_translation;
+        chat_textarea.textContent = final_translation;
         speechRecognizing = false;
         toggleIcon();
 
-        if (final_translation !== "") {
+        if (final_translation !== "") 
             chat_submitBtn.disabled = false;
-        }
-        if (appSettings.stt.auto_send) {
+        if (appSettings.stt.auto_send) 
             chat_submitBtn.click();
-        }
     };
 
     speechRecognition.onresult = (event) => {
@@ -83,7 +73,7 @@ function toggleSTT() {
                 final_translation += event.results[i][0].transcript;
             } else {
                 interim_translation += event.results[i][0].transcript;
-                chat_textarea.value = interim_translation;
+                chat_textarea.textContent = interim_translation;
             }
         }
     };
@@ -109,10 +99,11 @@ function checkIfVisible() {
     if (!document.getElementById("chatgpt-stt-btn")) {
         chat_textarea = document.querySelector(CHAT_TEXTAREA_SELECTOR) || null;
         chat_container = chat_textarea?.parentElement;
-        chat_submitBtn = chat_container?.parentElement?.children ? [...chat_container.parentElement.children].find((el) => el.type === "submit") : null;
+        chat_submitBtn = chat_container?.parentElement?.parentElement?.querySelector('button') || null;
 
         chat_textarea?.style.setProperty("padding-right", "4rem");
         chat_container?.insertAdjacentHTML("beforeend", sttBtnHTML);
+
         const sttBtn = document.getElementById("chatgpt-stt-btn") 
         sttBtn?.removeEventListener("click", toggleSTT)
         sttBtn?.addEventListener("click", toggleSTT)
@@ -125,7 +116,7 @@ function checkIfVisible() {
 function sendGetSettingsMsg() {
     window.postMessage(
         {
-            type: "chatgpt-stt-client",
+            type: "chatgpt-client",
             name: "settings",
         },
         "*"
@@ -140,83 +131,12 @@ function handleWindowMessage(event) {
 
     // We only accept messages from ourselves
     if (source !== window) return;
-    if (!data.type || data.type !== "chatgpt-stt-server") return;
+    if (!data.type || data.type !== "chatgpt-server") return;
 
     if (data.name === "settings") {
         appSettings = { ...appSettings, ...data.value };
-
-        if (browserSupports.textToSpeech && appSettings.tts.enabled) {
-            checkWritingInterval = setInterval(checkIfWritingResponse, 1000); // ! Has to be an interval due to next.js dynamic rerendering !
-        }
     }
 }
-
-/**
- * TTS Helper, as chrome has bug that stops speechSynthesis after 14 secs
- */
-var speechUtteranceChunker = function (utt, settings, callback) {
-    window.speechSynthesis.cancel()
-    settings = settings || {};
-
-    var newUtt;
-    var txt = settings && settings.offset !== undefined ? utt.text.substring(settings.offset) : utt.text;
-    if (!txt) {
-        callback();
-        return;
-    }
-
-    if (utt.voice && utt.voice.voiceURI === "native") {
-        // Not part of the spec
-        newUtt = utt;
-        newUtt.text = txt;
-        newUtt.addEventListener("end", function () {
-            if (speechUtteranceChunker.cancel) {
-                speechUtteranceChunker.cancel = false;
-            }
-            if (callback !== undefined) {
-                callback();
-            }
-        });
-    } else {
-        var chunkLength = (settings && settings.chunkLength) || 160;
-        var pattRegex = new RegExp(
-            "^[\\s\\S]{" + Math.floor(chunkLength / 2) + "," + chunkLength + "}[.!?,]{1}|^[\\s\\S]{1," + chunkLength + "}$|^[\\s\\S]{1," + chunkLength + "} "
-        );
-        var chunkArr = txt.match(pattRegex);
-
-        if (chunkArr[0] === undefined || chunkArr[0].length <= 2) {
-            if (callback !== undefined) {
-                callback();
-            }
-
-            return;
-        }
-
-        var chunk = chunkArr[0];
-        newUtt = new SpeechSynthesisUtterance(chunk);
-        newUtt.lang = utt.lang;
-        newUtt.rate = utt.rate;
-
-        newUtt.addEventListener("end", function () {
-            if (speechUtteranceChunker.cancel) {
-                speechUtteranceChunker.cancel = false;
-                return;
-            }
-            settings.offset = settings.offset || 0;
-            settings.offset += chunk.length - 1;
-            speechUtteranceChunker(utt, settings, callback);
-        });
-    }
-
-    if (settings.modifier) {
-        settings.modifier(newUtt);
-    }
-    console.log(newUtt); // IMPORTANT!! Do not remove: Logging the object out fixes some onend firing issues.
-
-    setTimeout(function () {
-        speechSynthesis.speak(newUtt);
-    }, 0);
-};
 
 /**
  * Await a timeout to avoid callback mess
@@ -229,81 +149,12 @@ function awaitTimeout(ms) {
     });
 }
 
-/**
- * Checks if ChatGPT is writing a response
- */
-async function checkIfWritingResponse() {
-    let writingSubmitBtn = chat_textarea?.parentElement?.parentElement?.querySelector("div")
-    if (!writingSubmitBtn) return;
-
-    clearInterval(checkWritingInterval);
-
-    ssInstance = new SpeechSynthesisUtterance();
-    ssInstance.lang = appSettings.tts.language_code;
-    ssInstance.rate = appSettings.tts.speed;
-
-    let currentlySpeaking = false;
-    const makeSpeech = async (spokenIndex) => {
-        if (currentlySpeaking) return;
-
-        let writingSubmitBtn = chat_textarea?.parentElement?.parentElement?.querySelector("div")
-        let allResponseDivs = document.querySelectorAll(CHAT_RESPONSES_SELECTOR);
-        let currentResponseDiv = allResponseDivs[allResponseDivs.length - 1];
-        if (!currentResponseDiv) {
-            checkWritingInterval = setInterval(checkIfWritingResponse, 1000);
-            return;
-        }
-
-        let currentResponse = currentResponseDiv.textContent;
-        let slicedResponse = currentResponse.slice(spokenIndex);
-        ssInstance.text = slicedResponse;
-
-        currentlySpeaking = true;
-        speechUtteranceChunker(ssInstance, { chunkLength: 5000 }, () => {
-            spokenIndex += slicedResponse.length;
-            currentlySpeaking = false;
-
-            if (!writingSubmitBtn) {
-                // If response is finished, make the last speech with the remaining text
-                let allResponseDivs = document.querySelectorAll(CHAT_RESPONSES_SELECTOR);
-                let currentResponseDiv = allResponseDivs[allResponseDivs.length - 1];
-                if (!currentResponseDiv) {
-                    checkWritingInterval = setInterval(checkIfWritingResponse, 1000);
-                    return;
-                }
-        
-                let currentResponse = currentResponseDiv.textContent;
-                let slicedResponse = currentResponse.slice(spokenIndex);
-        
-                console.log(slicedResponse)
-                ssInstance.text = slicedResponse;
-                speechUtteranceChunker(ssInstance, { chunkLength: 5000 }, () => {
-                    checkWritingInterval = setInterval(checkIfWritingResponse, 1000);
-                });
-            } else {
-                // If response is still writing, start over
-                setTimeout(() => {
-                    makeSpeech(spokenIndex);
-                }, 150)
-            }
-        });
-    };
-
-    await awaitTimeout(CHATGPT_APPROX_RESPONSE_TIME_MS)
-    makeSpeech(0);
-}
-
 /*************************/
 /* CHECK BROWSER SUPPORT */
 /*************************/
 if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
     browserSupports.speechToText = false;
     alert("ChatGPT Speech-To-Text: Your browser does not support speech recognition. Please update your browser.");
-}
-
-if (!window.speechSynthesis) {
-    browserSupports.textToSpeech = false;
-    alert("ChatGPT Speech-To-Text: Your browser does not support speech synthesis. Please update your browser.");
 }
 
 /*********************/

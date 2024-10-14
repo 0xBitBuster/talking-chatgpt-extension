@@ -14,9 +14,6 @@ Convert your speech into text so you can have a real conversation with (a talkin
 ### Usage
 Go to `chrome://extensions` and upload the extension directory
 
-## Quick Note
-Due to a known chrome SpeechSynthesis bug, the TTS feature may sometimes stop after 15 seconds.
-
 ## Contributing
 Contributions are welcome! If you have a feature request or bug report, please open an issue. If you want to contribute code, please fork the repository and submit a pull request.
 
